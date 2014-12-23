@@ -1,0 +1,68 @@
+=====================================
+Configuration
+=====================================
+
+Configuration of is handled through CMake.
+To configure run cmake from the build directory:
+
+cd /path/to/build/dir
+cmake \
+    -D CMAKE_BUILD_TYPE:STRING="Release" \
+    -D TPL_Boost_DIR:PATH=/path/to/boost/install/dir \
+    -D TPL_HDF5_DIR:PATH=/path/to/hdf5/install/dir \
+    -D TPL_Trilinos_DIR:PATH=/path/to/trilinos/install/dir \
+    -D TPL_VTK_DIR:PATH=/path/to/vtk/install/dir \
+    -D CMAKE_INSTALL_PREFIX:PATH=/path/to/install/dir \
+    /path/to/source/dir
+
+where /path/to/source/dir is the directory containig this README
+
+You can use the following variables to tell cmake where to find
+third party libraries (tipically each of these directories should
+contain a "lib" and an "include" subdirectory):
+
+    -D TPL_Boost_DIR:PATH=/path/to/boost/install/dir
+    -D TPL_HDF5_DIR:PATH=/path/to/hdf5/install/dir
+    -D TPL_Trilinos_DIR:PATH=/path/to/trilinos/install/dir
+    -D TPL_VTK_DIR:PATH=/path/to/vtk/install/dir
+
+To specify the type of build you can set the variable CMAKE_BUILD_TYPE
+to one of the following:
+    Release     compiles with flags -O2 -DNDEBUG
+    Debug       compiles with flags -D_GLIBCXX_DEBUG -DDEBUG -g -O0
+    Profile     compiles with flags -O2 -pg
+
+To build tests (which can be executed from the build directory
+calling "ctest") specify the option:
+    -D <ProjectName>_ENABLE_TESTS:BOOL=ON
+
+=====================================
+Build
+=====================================
+To build everything run make from the build directory
+cd /path/to/build/dir
+make
+
+To build documentation use the 'doc' target:
+make doc
+
+CMake generates different targes for every library, executable and test.
+they are all included in the target "all" but can be built individually.
+To list available targes:
+cd /path/to/build/dir
+make help
+
+=====================================
+Testing
+=====================================
+To run test:
+cd /path/to/build/dir
+make
+ctest
+
+=====================================
+Install
+=====================================
+cd /path/to/build/dir
+make install
+
