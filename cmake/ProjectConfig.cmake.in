@@ -6,13 +6,16 @@
 #  @PROJECT_NAME@_TPL_INCLUDE_DIRS - Third party libraries include directories for @PROJECT_NAME@
 #  @PROJECT_NAME@_TPL_LIBRARY_DIRS - Third party libraries library directories for @PROJECT_NAME@
 
-
-set(ENV_CMAKE_PREFIX_PATH ${CMAKE_MODULE_PATH})
-set(CMAKE_PREFIX_PATH @TPL_VTK_DIR@)
-set(VTK_DIR @TPL_VTK_DIR@)
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
-set(CMAKE_MODULE_PATH ${ENV_CMAKE_PREFIX_PATH})
+# Some packages don't use any variables but rather provide a USE_FILE that sets
+# up CMake to link and include the proper files and directories. These packages
+# need to pe found again, because their config file sets some variables used by
+# their USE_FILE
+include(FindThirdPartyLibrary.cmake)
+set(@PROJECT_NAME@_TPL_PACKAGES_PROVINDING_USE_FILES @PROJECT_TPL_PACKAGES_PROVIDING_USE_FILES@)
+foreach(PACKAGE ${@PROJECT_NAME@_TPL_PACKAGES_PROVINDING_USE_FILES})
+    find_third_party_library(${PACKAGE})
+    include(${PACKAGE}_USE_FILE)
+endforeach()
 
 # Compute paths
 get_filename_component(@PROJECT_NAME@_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)

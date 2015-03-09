@@ -2,14 +2,15 @@
 Configuration
 =====================================
 
-Configuration of is handled through CMake.
+Configuration is handled through CMake.
 To configure run cmake from the build directory:
 
 cd /path/to/build/dir
 cmake \
     -D CMAKE_BUILD_TYPE:STRING="Release" \
     -D TPL_Boost_DIR:PATH=/path/to/boost/install/dir \
-    -D TPL_HDF5_DIR:PATH=/path/to/hdf5/install/dir \
+    -D TPL_CGAL_DIR:PATH=/path/to/cgal/install/dir \
+     -D TPL_HDF5_DIR:PATH=/path/to/hdf5/install/dir \
     -D TPL_Trilinos_DIR:PATH=/path/to/trilinos/install/dir \
     -D TPL_VTK_DIR:PATH=/path/to/vtk/install/dir \
     -D CMAKE_INSTALL_PREFIX:PATH=/path/to/install/dir \
@@ -22,9 +23,13 @@ third party libraries (tipically each of these directories should
 contain a "lib" and an "include" subdirectory):
 
     -D TPL_Boost_DIR:PATH=/path/to/boost/install/dir
+    -D TPL_CGAL_DIR:PATH=/path/to/cgal/install/dir
     -D TPL_HDF5_DIR:PATH=/path/to/hdf5/install/dir
     -D TPL_Trilinos_DIR:PATH=/path/to/trilinos/install/dir
     -D TPL_VTK_DIR:PATH=/path/to/vtk/install/dir
+
+If these variables are not specified, CMake will try to locate dependencies
+in the default system paths
 
 To specify the type of build you can set the variable CMAKE_BUILD_TYPE
 to one of the following:

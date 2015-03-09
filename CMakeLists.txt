@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(PROJECT_NAME Awesome)
+set(PROJECT_NAME YourProjectName)
 project(${PROJECT_NAME})
 
 set (${PROJECT_NAME}_MAJOR_VERSION 0)
@@ -12,147 +12,58 @@ set(${PROJECT_NAME}_VERSION
 # (this way we have a variable which is not dependent on the project name)
 set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
 
-#================================
-# Third Party Libraries
-#================================
-# find_package uses a Find<package>.cmake module which it tries to find
-# in CMAKE_MODULE_PATH. Since for some packages (umfpack, cholmod, qhull...)
-# there is no default module, we use those in ${CMAKE_CURRENT_SOURCE_DIR}/cmake
-# (we later restore CMAKE_MODULE_PATH its value).
-# CMAKE_PREFIX_PATH is where find_package, find_library and find_file
-# look for files. We set this to the user defined TPL_<package>_DIR
-# so that system installations of the library don't prevail
-set(ENV_CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH})
-set(ENV_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-# CHOLMOD
-set(TPL_SuiteSparse_DIR "" CACHE PATH "SuiteSparse installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_SuiteSparse_DIR})
-find_package(Cholmod QUIET)
-if(NOT CHOLMOD_FOUND)
-    message(FATAL_ERROR "Cholmod not found. Try setting TPL_SuiteSparse_DIR to the installation path of SuiteSparse")
+option(${PROJECT_NAME}_ENABLE_TESTS "Enable tests" ON)
+if(${PROJECT_NAME}_ENABLE_TESTS)
+    enable_testing()
 endif()
-# UMFPACK
-set(CMAKE_PREFIX_PATH ${TPL_SuiteSparse_DIR})
-find_package(Umfpack QUIET)
-if(NOT UMFPACK_FOUND)
-    message(FATAL_ERROR "Umfpack not found. Try setting TPL_SuiteSparse_DIR to the installation path of SuiteSparse")
-endif()
-# Eigen
-set(TPL_Eigen_DIR "" CACHE PATH "Eigen installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_Eigen_DIR})
-find_package(Eigen3 QUIET)
-if(NOT EIGEN3_FOUND)
-    message(FATAL_ERROR "Eigen not found. Try setting TPL_Eigen_DIR to the installation path of Eigen")
-endif()
-#Qhull
-set(CMAKE_PREFIX_PATH ${TPL_Qhull_DIR})
-FIND_PACKAGE(Qhull)
-if(NOT QHULL_FOUND)
-    message(FATAL_ERROR "Qhull not found. Try setting TPL_Qhull_DIR to the installation path of Qhull")
-endif()
-# Restore CMAKE_MODULE_PATH to its original value
-set(CMAKE_MODULE_PATH ${ENV_CMAKE_MODULE_PATH})
-# BLAS
-set(TPL_BLAS_DIR "" CACHE PATH "BLAS installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_BLAS_DIR})
-find_package(BLAS QUIET)
-if(NOT BLAS_FOUND)
-    message(FATAL_ERROR "BLAS not found. Try setting TPL_BLAS_DIR to the installation path of BLAS")
-endif()
-# Restore CMAKE_PREFIX_PATH to its original value
-set(CMAKE_PREFIX_PATH ${ENV_CMAKE_PREFIX_PATH})
-# Boost
-set(TPL_Boost_DIR "" CACHE PATH "Boost installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_Boost_DIR})
-set(BOOST_ROOT ${TPL_Boost_DIR})
-FIND_PACKAGE(Boost REQUIRED COMPONENTS system filesystem regex)
-if(NOT BLAS_FOUND)
-    message(FATAL_ERROR "Boost not found. Try setting TPL_Boost_DIR to the installation path of Boost")
-endif()
-# HDF5
-set(TPL_HDF5_DIR "" CACHE PATH "HDF5 installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_HDF5_DIR})
-set(HDF5_ROOT ${TPL_HDF5_DIR})
-FIND_PACKAGE(HDF5 REQUIRED COMPONENTS C CXX)
-if(NOT HDF5_FOUND)
-    message(FATAL_ERROR "HDF5 not found. Try setting TPL_HDF5_DIR to the installation path of HDF5")
-endif()
-# zlib
-set(TPL_ZLIB_DIR "" CACHE PATH "ZLIB installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_ZLIB_DIR})
-if("${TPL_ZLIB_DIR}" STREQUAL "")
-FIND_PACKAGE(ZLIB)
-else("${TPL_ZLIB_DIR}" STREQUAL "")
-set(ZLIB_ROOT ${TPL_ZLIB_DIR})
-FIND_PACKAGE(ZLIB)
-endif("${TPL_ZLIB_DIR}" STREQUAL "")
-if(NOT ZLIB_FOUND)
-    message(FATAL_ERROR "ZLIB not found. Try setting TPL_ZLIB_DIR to the installation path of ZLIB")
-endif()
-# VTK
-set(TPL_VTK_DIR "" CACHE PATH "VTK installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_VTK_DIR})
-set(VTK_DIR ${TPL_VTK_DIR})
-FIND_PACKAGE(VTK REQUIRED)
-if(NOT VTK_FOUND)
-    message(FATAL_ERROR "VTK not found. Try setting TPL_VTK_DIR to the installation path of VTK")
-endif()
-INCLUDE(${VTK_USE_FILE})
-# Trilinos
-set(TPL_Trilinos_DIR "" CACHE PATH "Trilinos installation base directory")
-set(CMAKE_PREFIX_PATH ${TPL_TRILINOS_DIR})
-set(Trilinos_DIR ${TPL_Trilinos_DIR}/lib/cmake/Trilinos/)
-FIND_PACKAGE(Trilinos REQUIRED)
-if(NOT Trilinos_FOUND)
-    message(FATAL_ERROR "Trilinos not found. Try setting TPL_Trilinos_DIR to the installation path of Trilinos")
-endif()
-# Restore CMAKE_PREFIX_PATH to its original value
-set(CMAKE_PREFIX_PATH ${ENV_CMAKE_PREFIX_PATH})
 
 # This file contains the definition of special functions
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/IncludeFunctions.cmake)
 
-set(${PROJECT_NAME}_TPL_INCLUDE_DIRS
-    ${CHOLMOD_INCLUDES}
-    ${UMFPACK_INCLUDES}
-    ${EIGEN3_INCLUDE_DIR}
-    ${Boost_INCLUDE_DIRS}
-    ${HDF5_INCLUDE_DIR}
-    ${HDF5_INCLUDE_DIR_CPP}
-    ${Trilinos_INCLUDE_DIRS}
-    ${Trilinos_TPL_INCLUDE_DIRS}
-    ${VTK_INCLUDE_DIRS}
-    )
-message(STATUS "${PROJECT_NAME}_TPL_INCLUDE_DIRS = ${${PROJECT_NAME}_TPL_INCLUDE_DIRS}")
+#================================
+# Third Party Libraries
+#================================
+# find_third_party_library looks for a library in TPL_${PACKAGE_NAME}_DIR
+# or in the default system paths and appends its include dirs, library dirs
+# and library names to the following variables. Some packages don't
+# use any variables, but rather provide a USE_FILE that sets up CMake
+# to link and include the proper files and directories
+set(${PROJECT_NAME}_TPL_INCLUDE_DIRS "" CACHE INTERNAL "")
+set(${PROJECT_NAME}_TPL_LIBRARY_DIRS "" CACHE INTERNAL "")
+set(${PROJECT_NAME}_TPL_LIBRARIES "" CACHE INTERNAL "")
+set(${PROJECT_NAME}_TPL_PACKAGES_PROVIDING_USE_FILES "" CACHE INTERNAL "")
+set(${PROJECT_NAME}_TPL_USE_FILES "" CACHE INTERNAL "")
 
-set(${PROJECT_NAME}_TPL_LIBRARY_DIRS
-    ${Boost_LIBRARY_DIRS}
-    ${HDF5_LIBRARY_DIRS}
-    ${Trilinos_LIBRARY_DIRS}
-    ${VTK_LIBRARY_DIRS}
-    )
+find_third_party_library(Boost COMPONENTS thread)
+find_third_party_library(BLAS)
+find_third_party_library(CGAL)
+find_third_party_library(Cholmod)
+find_third_party_library(EDFM)
+find_third_party_library(Eigen3)
+find_third_party_library(HDF5)
+find_third_party_library(Qhull)
+find_third_party_library(Trilinos)
+find_third_party_library(Umfpack)
+find_third_party_library(VTK)
+find_third_party_library(ZLIB)
+
+message(STATUS "${PROJECT_NAME}_TPL_INCLUDE_DIRS = ${${PROJECT_NAME}_TPL_INCLUDE_DIRS}")
 message(STATUS "${PROJECT_NAME}_TPL_LIBRARY_DIRS = ${${PROJECT_NAME}_TPL_LIBRARY_DIRS}")
+message(STATUS "${PROJECT_NAME}_TPL_LIBRARIES = ${${PROJECT_NAME}_TPL_LIBRARIES}")
+message(STATUS "${PROJECT_NAME}_TPL_PACKAGES_PROVIDING_USE_FILES = ${${PROJECT_NAME}_TPL_PACKAGES_PROVIDING_USE_FILES}")
+message(STATUS "${PROJECT_NAME}_TPL_USE_FILES = ${${PROJECT_NAME}_TPL_USE_FILES}")
 
 include_directories(${${PROJECT_NAME}_TPL_INCLUDE_DIRS})
 
-include_directories(".")
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 link_directories(${${PROJECT_NAME}_TPL_LIBRARY_DIRS})
 
+foreach(TPL_USE_FILE ${${PROJECT_NAME}_TPL_USE_FILES})
+    include(${TPL_USE_FILE})
+endforeach()
+
 set(LIBRARIES
-    ${UMFPACK_LIBRARIES}
-    ${CHOLMOD_LIBRARIES}
-    ${BLAS_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${HDF5_LIBRARIES}
-    ${Trilinos_LIBRARIES}
-    ${Trilinos_TPL_LIBRARIES}
-    ${VTK_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    gfortran CACHE INTERNAL "")
+    ${${PROJECT_NAME}_TPL_LIBRARIES}
+    CACHE INTERNAL "")
 message(STATUS "LIBRARIES = ${LIBRARIES}")
 
 #================================
@@ -161,11 +72,6 @@ message(STATUS "LIBRARIES = ${LIBRARIES}")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O2")
-IF(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    IF(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.7 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 4.7)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs")
-    ENDIF()
-ENDIF()
 
 # Set specific flags for the three different build types (Release, debug and Profile)
 # -Wno-unused-local-typedefs suppresses a lot of warnings generated by the debug version of boost
@@ -212,15 +118,9 @@ mark_as_advanced(INSTALL_LIB_DIR INSTALL_BIN_DIR INSTALL_INCLUDE_DIR INSTALL_CMA
 #================================
 # Subdirectories
 #================================
-# ${PROJECT_NAME}_LIBS refers to the libraries in the "lib" folder
-set(${PROJECT_NAME}_LIBS_INCLUDE_DIRS CACHE INTERNAL "")
-set(${PROJECT_NAME}_LIBS_LIBRARY_DIRS CACHE INTERNAL "")
-set(${PROJECT_NAME}_LIBS_LIBRARIES CACHE INTERNAL "")
-add_subdirectory(lib)
-
-include_directories(${${PROJECT_NAME}_LIBS_INCLUDE_DIRS})
-link_directories(${${PROJECT_NAME}_LIBS_LIBRARY_DIRS})
-set(LIBRARIES ${LIBRARIES} ${${PROJECT_NAME}_LIBS_LIBRARIES} CACHE INTERNAL "")
+# Directories in which to look for header files
+include_directories(".")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_subdirectory(src)
 
