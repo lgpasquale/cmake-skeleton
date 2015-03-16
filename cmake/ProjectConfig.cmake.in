@@ -12,7 +12,8 @@
 # up CMake to link and include the proper files and directories. These packages
 # need to pe found again, because their config file sets some variables used by
 # their USE_FILE
-include(FindThirdPartyLibrary.cmake)
+get_filename_component(@PROJECT_NAME@_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(${@PROJECT_NAME@_CMAKE_DIR}/FindThirdPartyLibrary.cmake)
 @SET_TPL_DIRS_COMMANDS@
 set(@PROJECT_NAME@_TPL_PACKAGES_PROVINDING_USE_FILES @PROJECT_TPL_PACKAGES_PROVIDING_USE_FILES@)
 foreach(PACKAGE ${@PROJECT_NAME@_TPL_PACKAGES_PROVINDING_USE_FILES})
@@ -21,7 +22,6 @@ foreach(PACKAGE ${@PROJECT_NAME@_TPL_PACKAGES_PROVINDING_USE_FILES})
 endforeach()
 
 # Compute paths
-get_filename_component(@PROJECT_NAME@_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(@PROJECT_NAME@_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 set(@PROJECT_NAME@_LIBRARY_DIRS "@CONF_LIBRARY_DIRS@")
 set(@PROJECT_NAME@_LIBRARIES @LIBRARIES@ )
