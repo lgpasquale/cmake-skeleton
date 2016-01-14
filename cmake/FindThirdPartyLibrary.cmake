@@ -21,9 +21,11 @@ set(CMAKE_PREFIX_PATH ${TPL_${PACKAGE_NAME}_DIR})
 # Package specific variables
 if("${PACKAGE_NAME}" STREQUAL "Boost")
     set(BOOST_ROOT ${TPL_Boost_DIR})
+    # If we allow FindBoost to look for boost-cmake, that version will
+    # be used despite what we set in BOOST_ROOT
+    set(Boost_NO_BOOST_CMAKE TRUE)
 elseif("${PACKAGE_NAME}" STREQUAL "HDF5")
     set(HDF5_ROOT ${TPL_HDF5_DIR})
-
 elseif("${PACKAGE_NAME}" STREQUAL "ZLIB")
     if(NOT "${TPL_ZLIB_DIR}" STREQUAL "")
         set(ZLIB_ROOT ${TPL_ZLIB_DIR})
