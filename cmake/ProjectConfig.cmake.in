@@ -18,7 +18,7 @@ include(${@PROJECT_NAME@_CMAKE_DIR}/FindThirdPartyLibrary.cmake)
 set(@PROJECT_NAME@_TPL_PACKAGES_PROVINDING_USE_FILES @PROJECT_TPL_PACKAGES_PROVIDING_USE_FILES@)
 foreach(PACKAGE ${@PROJECT_NAME@_TPL_PACKAGES_PROVINDING_USE_FILES})
     find_third_party_library(${PACKAGE})
-    include(${PACKAGE}_USE_FILE)
+    include(${${PACKAGE}_USE_FILE})
 endforeach()
 
 # Compute paths
