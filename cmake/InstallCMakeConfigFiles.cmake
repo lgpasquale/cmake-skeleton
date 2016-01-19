@@ -24,7 +24,7 @@ set(PROJECT_TPL_PACKAGES_PROVIDING_USE_FILES ${${PROJECT_NAME}_TPL_PACKAGES_PROV
 # Packages providing a USE_FILE still need to be found, so we export the directory in which they can be found in ${PROJECT_NAME}_TPL_${PACKAGE}_DIR
 foreach(PACKAGE ${PROJECT_TPL_PACKAGES_PROVIDING_USE_FILES})
     if(NOT "${TPL_${PACKAGE}_DIR}" STREQUAL "")
-        set(SET_TPL_DIRS_COMMANDS "${SET_TPL_DIRS_COMMANDS}\nset(TPL_${PACKAGE}_DIR ${TPL_${PACKAGE}_DIR})")
+        set(SET_TPL_DIRS_COMMANDS "${SET_TPL_DIRS_COMMANDS}\nset(TPL_${PACKAGE}_DIR ${TPL_${PACKAGE}_DIR} CACHE INTERNALE \"${PACKAGE} installation base directory\")")
     endif()
 endforeach()
 
