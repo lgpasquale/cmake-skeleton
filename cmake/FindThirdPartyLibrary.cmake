@@ -5,6 +5,10 @@
 # ${PROJECT_NAME}_TPL_LIBRARIES
 MACRO(FIND_THIRD_PARTY_LIBRARY PACKAGE_NAME)
 
+# We want the user to use TPL_${PACKAGE_NAME}_DIR, and not ${PACKAGE_NAME}_DIR,
+# which is set by find_package
+mark_as_advanced(${PACKAGE_NAME}_DIR)
+
 # find_package uses a Find<package>.cmake module which it tries to find
 # in CMAKE_MODULE_PATH. Since for some packages (umfpack, cholmod, qhull...)
 # there is no default module, we use those in ${CMAKE_CURRENT_SOURCE_DIR}/cmake
@@ -99,7 +103,7 @@ if(DEFINED ${PACKAGE_NAME}_TPL_INCLUDE_DIRS)
         CACHE INTERNAL "")
 endif()
 if(DEFINED ${PACKAGE_NAME}_TPL_LIBRARY_DIRS)
-    set(${PROJECT_NAME}_TPL_LIBRAR_DIRS ${${PROJECT_NAME}_TPL_LIBRARY_DIRS}
+    set(${PROJECT_NAME}_TPL_LIBRARY_DIRS ${${PROJECT_NAME}_TPL_LIBRARY_DIRS}
         ${${PACKAGE_NAME}_TPL_LIBRARY_DIRS}
         CACHE INTERNAL "")
 endif()
