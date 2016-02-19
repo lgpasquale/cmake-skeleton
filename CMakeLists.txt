@@ -17,6 +17,9 @@ if(${PROJECT_NAME}_ENABLE_TESTS)
     enable_testing()
 endif()
 
+# Only interpret if() arguments as variables or keywords when unquoted
+cmake_policy(SET CMP0054 NEW)
+
 # This file contains the definition of special functions
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/IncludeFunctions.cmake)
 
@@ -90,6 +93,22 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
         message(STATUS "Compiling with flags:\n  ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_CODECOVERAGE}")
         setup_target_for_coverage(${PROJECT_NAME}_coverage ${CMAKE_CTEST_COMMAND} coverage)
     endif()
+endif()
+
+if(WIN32)
+    # Statically link libraries
+    foreach(flag_var
+            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+        if(${flag_var} MATCHES "/MD")
+            string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+        endif(${flag_var} MATCHES "/MD")
+    endforeach(flag_var)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")
+    # Install the required MSVC libraries
+    # (should not be needed since we are linking statically)
+    include(InstallRequiredSystemLibraries)
+    message(STATUS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
 endif()
 
 #================================
@@ -182,3 +201,28 @@ endif(DOXYGEN_FOUND)
 # This file configures and prepares for installation
 # ${PROJECT_NAME}Config.cmake and ${PROJECT_NAME}ConfigVersion.cmake
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/InstallCMakeConfigFiles.cmake)
+
+#================================
+# Installer
+#================================
+
+if(WIN32)
+    # Name of the installation directory
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
+    # Version
+    set(CPACK_PACKAGE_VERSION_MAJOR ${${PROJECT_NAME}_MAJOR_VERSION})
+    set(CPACK_PACKAGE_VERSION_MINOR ${${PROJECT_NAME}_MINOR_VERSION})
+    set(CPACK_PACKAGE_VERSION_PATCH ${${PROJECT_NAME}_PATCH_VERSION})
+    # Licence file
+    #set(CPACK_RESOURCE_FILE_LICENSE "")
+    # Vendor
+    set(CPACK_PACKAGE_VENDOR "Moxoff")
+    # Disable the component based installer
+    set(CPACK_MONOLITHIC_INSTALL ON)
+    # Pairs of executable and displayed name to show in the start menu
+    set(CPACK_PACKAGE_EXECUTABLES "main;Launch ${PROJECT_NAME}")
+    # Disable request for administrator privileges (none|user|highest|admin)
+    #set(CPACK_NSIS_DEFINES "${CPACK_NSIS_DEFINES}\nRequestExecutionLevel user")
+
+    include(CPack)
+endif()
