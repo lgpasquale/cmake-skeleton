@@ -97,7 +97,10 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
     endif()
 endif()
 
-if(WIN32)
+if(MSVC)
+    # Enable openmp
+    #set(CMAKE_CXX_FLAGS_RELEASE "/openmp /GL")
+    #set(CMAKE_INSTALL_OPENMP_LIBRARIES ON) # used by InstallRequiredSystemLibraries to install VCOMP*.dll
     # Statically link libraries
     foreach(flag_var
             CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
