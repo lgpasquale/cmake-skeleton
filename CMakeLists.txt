@@ -18,7 +18,9 @@ if(${PROJECT_NAME}_ENABLE_TESTS)
 endif()
 
 # Only interpret if() arguments as variables or keywords when unquoted
-cmake_policy(SET CMP0054 NEW)
+if (NOT ${CMAKE_VERSION} VERSION_LESS "3.1")
+    cmake_policy(SET CMP0054 NEW)
+endif()
 
 # This file contains the definition of special functions
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/IncludeFunctions.cmake)
