@@ -1,6 +1,6 @@
-#include <ProjectName/dummy/DummyClass.hpp>
+#include <YourProjectName/second_dummy/SecondDummyClass.hpp>
 
-using namespace ProjectName;
+using namespace YourProjectName;
 
 int main(int argc, char** argv) {
 

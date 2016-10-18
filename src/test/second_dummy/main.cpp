@@ -1,6 +1,6 @@
-#include <ProjectName/dummy/DummyClass.hpp>
+#include <YourProjectName/second_dummy/SecondDummyClass.hpp>
 
 int main (int argc, char** argv)
 {
-    return EXIT_SUCCESS;
+    return 0;
 }

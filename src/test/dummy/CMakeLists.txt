@@ -12,17 +12,17 @@ add_test(NAME DummyTest
 # If the test needs some files to be copied to the build directory
 # we can specify them here. These files will be copied to this build
 # directory regardless of their source directory
-copy_files_to_binary_dir(second_dummy_test_files # target name
-    ../../mesh/input_file1
-    ../../mesh/input_file2
-)
+#copy_files_to_binary_dir(dummy_test_files # target name
+#    ../../data/input_file1
+#    ../../data/input_file2
+#)
 
 # If the test needs some files to be linked to the build directory
 # we can specify them here. The link will be created in this build
 # directory regardless of their source directory
-link_files_to_binary_dir(second_dummy_test_files_link # target name
-    ../../mesh/large_input_file1
-    ../../mesh/large_input_file2
-)
+#link_files_to_binary_dir(dummy_test_files_link # target name
+#    ../../data/large_input_file1
+#    ../../data/large_input_file2
+#)
 
 

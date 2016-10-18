@@ -5,6 +5,6 @@ add_executable(second_dummy main.cpp)
 target_link_libraries(second_dummy ${LIBRARIES})
 
 install (TARGETS second_dummy
-    DESTINATION ${INSTALL_BIN_DIR})
+    DESTINATION ${PROJECT_BIN_INSTALL_DIR})
 
 
