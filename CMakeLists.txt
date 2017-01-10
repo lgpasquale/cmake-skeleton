@@ -18,29 +18,27 @@ if(${PROJECT_NAME}_ENABLE_TESTS)
 endif()
 
 # Project setup (basic flags, variables, cmake function...)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/SetUpProject.cmake)
+set(CUPID_VERSION "d4c8e42590888d4b6e3acb3eef20884c20adfff5")
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/cupid/src/SetUpProject.cmake)
+    message(STATUS "Downloading cupid...")
+    file(DOWNLOAD https://github.com/lgpasquale/cupid/archive/${CUPID_VERSION}.zip
+        ${CMAKE_BINARY_DIR}/cupid.zip)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xf cupid.zip
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    execute_process(COMMAND ${CMAKE_COMMAND} -E rename "cupid-${CUPID_VERSION}" "cupid"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+endif()
+include(${CMAKE_BINARY_DIR}/cupid/src/SetUpProject.cmake)
+#include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/src/SetUpProject.cmake)
 
 #================================
 # Dependencies
 #================================
-# find_third_party_library looks for a library in TPL_${PACKAGE_NAME}_DIR
-# or in the default system paths and appends its include dirs, library dirs
-# and library names to the following variables. Some packages don't
-# use any variables, but rather provide a USE_FILE that sets up CMake
-# to link and include the proper files and directories
+add_project_dependency(Eigen3)
+add_project_dependency(Boost COMPONENTS regex filesystem program_options)
 
-#find_third_party_library(Boost COMPONENTS thread)
-#find_third_party_library(BLAS)
-#find_third_party_library(CGAL)
-#find_third_party_library(CHOLMOD)
-#find_third_party_library(EDFM)
-#find_third_party_library(EIGEN3)
-#find_third_party_library(HDF5)
-#find_third_party_library(Qhull)
-#find_third_party_library(Trilinos)
-find_third_party_library(UMFPACK)
-#find_third_party_library(VTK)
-find_third_party_library(ZLIB)
+install_project_dependencies()
+find_project_dependencies()
 
 message(STATUS "${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS = ${${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS}")
 message(STATUS "${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS = ${${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS}")
@@ -111,8 +109,6 @@ if(WIN32)
     set(CPACK_PACKAGE_EXECUTABLES "main;Launch ${PROJECT_NAME}")
     # Disable request for administrator privileges (none|user|highest|admin)
     #set(CPACK_NSIS_DEFINES "${CPACK_NSIS_DEFINES}\nRequestExecutionLevel user")
-
-    include(CPack)
 endif()
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/InstallProject.cmake)
+include(${CUPID_DIR}/src/InstallProject.cmake)
 
