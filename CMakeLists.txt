@@ -18,42 +18,22 @@ if(${PROJECT_NAME}_ENABLE_TESTS)
 endif()
 
 # Project setup (basic flags, variables, cmake function...)
-set(CUPID_VERSION "ceb627b908c9394b89162708f699dcf742aadbc9")
+set(CUPID_VERSION "1659e5a60ada86808b520d73d87d081c5b35286b")
 if(EXISTS "${CMAKE_SOURCE_DIR}/cupid/src/SetUpProject.cmake")
     set(CUPID_DIR "${CMAKE_SOURCE_DIR}/cupid")
-elseif(NOT EXISTS "${CMAKE_BINARY_DIR}/cupid/src/SetUpProject.cmake")
-    message(STATUS "Downloading cupid...")
-    file(DOWNLOAD https://github.com/lgpasquale/cupid/archive/${CUPID_VERSION}.zip
-        "${CMAKE_BINARY_DIR}/cupid.zip")
-    execute_process(COMMAND "${CMAKE_COMMAND}" -E tar xf cupid.zip
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
-    execute_process(COMMAND "${CMAKE_COMMAND}" -E rename "cupid-${CUPID_VERSION}" "cupid"
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+else ()
+    if(NOT EXISTS "${CMAKE_BINARY_DIR}/cupid/src/SetUpProject.cmake")
+        message(STATUS "Downloading cupid...")
+        file(DOWNLOAD https://github.com/lgpasquale/cupid/archive/${CUPID_VERSION}.zip
+            "${CMAKE_BINARY_DIR}/cupid.zip")
+        execute_process(COMMAND "${CMAKE_COMMAND}" -E tar xf cupid.zip
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+        execute_process(COMMAND "${CMAKE_COMMAND}" -E rename "cupid-${CUPID_VERSION}" "cupid"
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+    endif()
     set(CUPID_DIR "${CMAKE_BINARY_DIR}/cupid")
 endif()
 include("${CUPID_DIR}/src/SetUpProject.cmake")
-
-#================================
-# Dependencies
-#================================
-add_project_dependency(Eigen3)
-add_project_dependency(Boost COMPONENTS regex filesystem program_options)
-
-install_project_dependencies()
-find_project_dependencies()
-
-message(STATUS "${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS = ${${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS}")
-message(STATUS "${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS = ${${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS}")
-message(STATUS "${PROJECT_NAME}_DEPENDENCIES_LIBRARIES = ${${PROJECT_NAME}_DEPENDENCIES_LIBRARIES}")
-message(STATUS "${PROJECT_NAME}_DEPENDENCIES_PROVIDING_USE_FILES = ${${PROJECT_NAME}_DEPENDENCIES_PROVIDING_USE_FILES}")
-
-include_directories(SYSTEM ${${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS})
-
-link_directories(${${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS})
-
-set(LIBRARIES
-    ${${PROJECT_NAME}_DEPENDENCIES_LIBRARIES}
-    CACHE INTERNAL "")
 
 #================================
 # Flags
@@ -87,6 +67,28 @@ if(MSVC)
     #set(CMAKE_CXX_FLAGS_RELEASE "/openmp /GL")
     #set(CMAKE_INSTALL_OPENMP_LIBRARIES ON) # used by InstallRequiredSystemLibraries to install VCOMP*.dll
 endif()
+
+#================================
+# Dependencies
+#================================
+add_project_dependency(Eigen3)
+add_project_dependency(Boost COMPONENTS regex filesystem program_options)
+
+install_project_dependencies()
+find_project_dependencies()
+
+message(STATUS "${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS = ${${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS}")
+message(STATUS "${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS = ${${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS}")
+message(STATUS "${PROJECT_NAME}_DEPENDENCIES_LIBRARIES = ${${PROJECT_NAME}_DEPENDENCIES_LIBRARIES}")
+message(STATUS "${PROJECT_NAME}_DEPENDENCIES_PROVIDING_USE_FILES = ${${PROJECT_NAME}_DEPENDENCIES_PROVIDING_USE_FILES}")
+
+include_directories(SYSTEM ${${PROJECT_NAME}_DEPENDENCIES_INCLUDE_DIRS})
+
+link_directories(${${PROJECT_NAME}_DEPENDENCIES_LIBRARY_DIRS})
+
+set(LIBRARIES
+    ${${PROJECT_NAME}_DEPENDENCIES_LIBRARIES}
+    CACHE INTERNAL "")
 
 #================================
 # Subdirectories
