@@ -18,7 +18,7 @@ if(${PROJECT_NAME}_ENABLE_TESTS)
 endif()
 
 # Project setup (basic flags, variables, cmake function...)
-set(CUPID_VERSION "58c03d20e7cca7fd27e54d0b10f90debe5db5970")
+set(CUPID_VERSION "0c970e3ab227e46f77a603b4290154647dd3d66b")
 if(EXISTS "${CMAKE_SOURCE_DIR}/cupid/src/SetUpProject.cmake")
     set(CUPID_DIR "${CMAKE_SOURCE_DIR}/cupid")
 else ()
