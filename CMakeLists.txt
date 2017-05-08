@@ -18,7 +18,7 @@ if(${PROJECT_NAME}_ENABLE_TESTS)
 endif()
 
 # Project setup (basic flags, variables, cmake function...)
-set(CUPID_VERSION "1659e5a60ada86808b520d73d87d081c5b35286b")
+set(CUPID_VERSION "58c03d20e7cca7fd27e54d0b10f90debe5db5970")
 if(EXISTS "${CMAKE_SOURCE_DIR}/cupid/src/SetUpProject.cmake")
     set(CUPID_DIR "${CMAKE_SOURCE_DIR}/cupid")
 else ()
@@ -71,8 +71,9 @@ endif()
 #================================
 # Dependencies
 #================================
-add_project_dependency(Eigen3)
-add_project_dependency(Boost COMPONENTS regex filesystem program_options)
+add_project_dependency(OpenCV)
+#add_project_dependency(Eigen3)
+#add_project_dependency(Boost COMPONENTS regex filesystem program_options)
 
 install_project_dependencies()
 find_project_dependencies()
