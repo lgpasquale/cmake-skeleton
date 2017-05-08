@@ -1,72 +1,46 @@
-# Configuration
+# CMake Skeleton
 
-Configuration is handled through CMake.
-To configure run cmake from the build directory:
+This skeleton uses [CUPID](https://github.com/lgpasquale/cupid) to manage
+dependecies and to provide some utility functions
 
-```sh
-cd /path/to/build/dir
-cmake \
-    -D CMAKE_BUILD_TYPE:STRING="Release" \
-    -D CMAKE_INSTALL_PREFIX:PATH=/path/to/install/dir \
-    /path/to/source/dir
+To update CUPID's version simply change the value of the variable
+`CUPID_VERSION` in `CMakeLists.txt`
+
+## Configuring the project
+
+Edit the CMakeLists.txt in the main directory and set the project name and
+version in the first few lines of the files
+
+To add a dependency use the function `add_project_dependency`
+
+## Adding Files to the library #
+
+If you need to create a subdirectory in `src` simply edit `src/CMakeLists.txt`
+and add:
+```cmake
+include_subdirectory(your_subdirectory_name)
 ```
 
-where /path/to/source/dir is the directory containig this README
+To add source files to the library in a subdirectory of `src` edit (or create)
+the file `CMakeLists.txt` in that subdirectory so that it contains something like:
+```cmake
+set(${PROJECT_NAME}_HEADERS ${${PROJECT_NAME}_HEADERS}
+    your_subdirectory_name/your_header_file.hpp
+    your_subdirectory_name/your_other_header_file.hpp
+    CACHE INTERNAL "")
 
-By default cmake will try to install all dependencies. If you want to use a version of a dependecy installed elsewhere, you can set the cmake variable
-`DEPENDENCIES_INSTALL_<dependency name>` to off and then
-use the variable `DEPENDENCIES_<dependency name>_DIR` to tell cmake where to find that dependency.
-For example:
+set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
+    your_subdirectory_name/your_source_file.cpp
+    your_subdirectory_name/your_other_source_file.cpp
+    CACHE INTERNAL "")
+    ```
 
-```sh
-cd /path/to/build/dir
-cmake \
-    -D CMAKE_BUILD_TYPE:STRING="Release" \
-    -D CMAKE_INSTALL_PREFIX:PATH=/path/to/install/dir \
-    -D DEPENDENCIES_<library name>_DIR:PATH=/path/to/dependency/install/dir \
-    -D DEPENDENCIES_INSTALL_<dependency name>:BOOL=OFF \
-    /path/to/source/dir
-```
+## Adding executables to the library #
 
-To specify the type of build you can set the variable `CMAKE_BUILD_TYPE`
-to one of the following:
-- `Release`     compiles with flags -O2 -DNDEBUG
-- `Debug`       compiles with flags -D_GLIBCXX_DEBUG -DDEBUG -g -O0
-- `Profile`     compiles with flags -O2 -pg
+To create an executable copy the `bin/dummy` directory, add/edit the files
+therein and add the newly created directory name to `bin/CMakeLists.txt`.
 
-## Build
+## Adding tests to the library #
 
-To build everything run make from the build directory
-```sh
-cd /path/to/build/dir
-make
-```
-
-To build documentation use the 'doc' target:
-```sh
-make doc
-```
-
-CMake generates different targes for every library, executable and test.
-they are all included in the target "all" but can be built individually.
-To list available targes:
-```
-cd /path/to/build/dir
-make help
-```
-
-## Testing
-
-To run all tests:
-```sh
-cd /path/to/build/dir
-make
-ctest
-```
-
-## Install
-
-```sh
-cd /path/to/build/dir
-make install
-```
+To create a test copy the `test/dummy` directory, add/edit the files therein
+and add the newly created directory name to `test/CMakeLists.txt`
