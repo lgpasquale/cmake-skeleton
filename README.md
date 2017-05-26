@@ -1,6 +1,6 @@
-# CMake Skeleton
+# CMake instructions
 
-This skeleton uses [CUPID](https://github.com/lgpasquale/cupid) to manage
+This project uses [CUPID](https://github.com/lgpasquale/cupid) to manage
 dependecies and to provide some utility functions
 
 To update CUPID's version simply change the value of the variable
@@ -33,14 +33,20 @@ set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
     your_subdirectory_name/your_source_file.cpp
     your_subdirectory_name/your_other_source_file.cpp
     CACHE INTERNAL "")
-    ```
+```
 
 ## Adding executables to the library #
 
-To create an executable copy the `bin/dummy` directory, add/edit the files
-therein and add the newly created directory name to `bin/CMakeLists.txt`.
+To create an executable you can use the cmake macro `add_project_executable`.
+Simply add in a CMakeLists.txt (preferably under `src/bin`):
+```cmake
+add_project_executable(target-name source1.cpp [source2.cpp ...])
+```
 
 ## Adding tests to the library #
 
-To create a test copy the `test/dummy` directory, add/edit the files therein
-and add the newly created directory name to `test/CMakeLists.txt`
+To create a test you can use the cmake macro `add_project_test_executable`.
+Simply add in a CMakeLists.txt (under `src/test`):
+```cmake
+add_project_test_executable(target-name source1.cpp [source2.cpp ...])
+```
